@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">My Torch</string>
+    <string name="off_button">Off Button</string>
+    <string name="on_button">On Button</string>
+    <string name="long_button">Long Click button</string>
+    <string name="themes">Change theme</string>
+    <string name="about">About</string>
+    <string name="ic_menu">Menu icon</string>
+    <string name="img_about">Dev\'s picture</string>
+    <string name="full_name">Ebenezer Justice</string>
+    <string name="back_home">Back To Home</string>
+</resources>

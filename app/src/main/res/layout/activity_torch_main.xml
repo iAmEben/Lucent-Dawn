@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TorchMainActivity">
+
+
+
+    <ImageButton
+        android:id="@+id/button_off"
+        android:layout_width="@dimen/button_size"
+        android:layout_height="@dimen/button_size"
+        android:layout_centerInParent="true"
+        android:background="@drawable/gray_round"
+        android:contentDescription="@string/off_button"
+        android:src="@drawable/ic_power_button" />
+
+
+    <ImageButton
+        android:id="@+id/button_on"
+        android:layout_width="@dimen/button_size"
+        android:layout_height="@dimen/button_size"
+        android:layout_centerInParent="true"
+        android:background="@drawable/green_round"
+        android:contentDescription="@string/on_button"
+        android:elevation="20dp"
+        android:src="@drawable/ic_power_button"
+        android:visibility="visible" />
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+
+</RelativeLayout>

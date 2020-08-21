@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!-- The colors used for the light mode-->
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#FFFFFF</color>
+    <color name="colorAccent">#FF99CC00</color>
+    <color name="androidBackground">#FFFFFF</color>
+
+
+
+</resources>

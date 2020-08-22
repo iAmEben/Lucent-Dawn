@@ -29,10 +29,5 @@
         android:visibility="visible" />
 
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tool_menu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
 
 </RelativeLayout>

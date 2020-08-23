@@ -1,6 +1,4 @@
 package com.iameben.mytorch;
-
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import android.content.Context;

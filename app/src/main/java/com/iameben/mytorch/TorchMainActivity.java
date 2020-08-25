@@ -7,7 +7,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-//import android.os.SystemClock;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 
@@ -25,28 +25,23 @@ import java.util.Objects;
  * It also has a menu button that toggles between dark mode and night mode.
  * The way this application is designed it does'nt require any permission from the android device.
  * SEE CODES BELOW
- * ALL COMMENTED CODES ARE GOING TO BE UPDATED IN THE NEXT VERSION OF THIS PROJECT!!!
  * */
 
 
 public class TorchMainActivity extends AppCompatActivity {
 
 
-    private boolean isDarkMode = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES;
-
     // variables
+    private boolean isDarkMode = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES;
     private CameraManager cameraManager;
     private String cameraID;
-//    private boolean blinkEnabler = true;
-//    private boolean ledState = true;
-//    private boolean sLong;
+    private boolean blinkEnabler;
+    private boolean ledState = true;
     ImageButton switchOn;
     ImageButton switchOff;
     MediaPlayer mediaPlayer;
 
     private static final String TAG = "TorchMainActivity";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,74 +83,68 @@ public class TorchMainActivity extends AppCompatActivity {
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
-            mediaPlayer.start();
-
-
         });
 
         //sets an onclicklistener for the on button
 
         switchOn.setOnClickListener(view -> {
+
             switchOff.setVisibility(View.VISIBLE);
             switchOn.setVisibility(View.GONE);
-//            Log.i(TAG, "onCreate: switchon Onclick listener started" + "slong:" + sLong );
-//            if (sLong = !sLong) {
-//                sLong = false;
-                try {
-                    cameraManager.setTorchMode(cameraID, true);
-                } catch (CameraAccessException e) {
-                    e.printStackTrace();
-                }
-//            }else {
-//                blinkEnabler = false;
-//            }
+
+            blinkEnabler = false;
+            SystemClock.sleep(200);
+            try {
+                cameraManager.setTorchMode(cameraID, true);
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
             mediaPlayer.start();
         });
 
-//        switchOn.setOnLongClickListener(view -> {
-//          if (blinkEnabler) {
-//              blinkEnabler = true;
-//              startThread();
-//              sLong = true;
-//          }else{
-//              blinkEnabler = false;
-//          }
-//           return true;
-//       });
+        switchOn.setOnLongClickListener(view -> {
+            blinkEnabler = true;
+            startThread();
+
+            return true;
+        });
 
 
     }
-//    private void startThread(){
-//        Thread thread = new Thread(() -> {
-//            while (blinkEnabler) {
-//                if (ledState) {
-//                    try {
-//                        cameraManager.setTorchMode(cameraID, false);
-//                    } catch (CameraAccessException e) {
-//                        e.printStackTrace();
-//                    }
-//                    System.out.println("first if statement started correctly");
-//                } else {
-//                    try {
-//                        cameraManager.setTorchMode(cameraID, true);
-//                    } catch (CameraAccessException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                System.out.println("second if statement started correctly");
-//                ledState = !ledState;
-//                SystemClock.sleep(1000);
-//            }
-//            try {
-//                cameraManager.setTorchMode(cameraID, false);
-//            } catch (CameraAccessException e) {
-//                e.printStackTrace();
-//            }
-//
-//        });
-//        thread.start();
-//
-//    }
+
+    //background thread that handles the flash blinks
+    private void startThread() {
+        Thread thread = new Thread(() -> {
+            while (blinkEnabler) {
+                if (ledState) {
+                    try {
+                        cameraManager.setTorchMode(cameraID, false);
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("first if statement started correctly");
+                } else {
+                    try {
+                        cameraManager.setTorchMode(cameraID, true);
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("second if statement started correctly");
+                ledState = !ledState;
+                SystemClock.sleep(400);
+            }
+            try {
+                cameraManager.setTorchMode(cameraID, false);
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+
+        });
+        thread.start();
+
+    }
+
     // This method saves the theme selected in a sharedpreference
     private void setUserThemeMode() {
         SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
@@ -170,13 +159,14 @@ public class TorchMainActivity extends AppCompatActivity {
     }
 
 
-    int icon;
+
 
     // overrides the onCreateOptionsMenu and inflates a menu to it
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.app_menu, menu);
 
+        int icon;
         if (isDarkMode) {
             icon = R.drawable.ic_theme_light;
         } else {
@@ -205,13 +195,17 @@ public class TorchMainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
     //This is called because mediaPlayer has to be destroyed properly
     protected void onStop() {
-        super.onStop();
         if (mediaPlayer != null) {
+            mediaPlayer.reset();
             mediaPlayer.release();
 
         }
+        super.onStop();
+
     }
 
 

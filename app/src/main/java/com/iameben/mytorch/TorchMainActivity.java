@@ -37,6 +37,7 @@ public class TorchMainActivity extends AppCompatActivity {
     private String cameraID;
     private boolean blinkEnabler;
     private boolean ledState = true;
+    private boolean threadState;
     ImageButton switchOn;
     ImageButton switchOff;
     MediaPlayer mediaPlayer;
@@ -83,17 +84,24 @@ public class TorchMainActivity extends AppCompatActivity {
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
+            mediaPlayer.start();
         });
 
         //sets an onclicklistener for the on button
-
         switchOn.setOnClickListener(view -> {
 
             switchOff.setVisibility(View.VISIBLE);
             switchOn.setVisibility(View.GONE);
-
-            blinkEnabler = false;
-            SystemClock.sleep(200);
+            //sets the threadState to false so the onLongClickListener can run again
+            threadState = false;
+            // If the onLongClickListener is running and blinkEnabler is set to true,
+            // Set blinkEnabler to false and runs the code
+            if (blinkEnabler) {
+                blinkEnabler = false;
+                // used a sleep method because I want the system to
+                // recover some time after switching the led off, and on again.
+                SystemClock.sleep(370);
+            }
             try {
                 cameraManager.setTorchMode(cameraID, true);
             } catch (CameraAccessException e) {
@@ -102,27 +110,32 @@ public class TorchMainActivity extends AppCompatActivity {
             mediaPlayer.start();
         });
 
+        //sets an onlongclicklistener for the on button
         switchOn.setOnLongClickListener(view -> {
             blinkEnabler = true;
-            startThread();
+            // Because I want the method inside this if statement to be called once and not repeated
+            if (!threadState) {
+                startThread();
 
+            }
+            threadState = true;
             return true;
         });
 
 
     }
 
-    //background thread that handles the flash blinks
+    //Thread that handles the flash blinks
     private void startThread() {
         Thread thread = new Thread(() -> {
             while (blinkEnabler) {
+                Log.d(TAG, "startThread: Thread loop, loping" + ' ' + Thread.currentThread() + "started");
                 if (ledState) {
                     try {
                         cameraManager.setTorchMode(cameraID, false);
                     } catch (CameraAccessException e) {
                         e.printStackTrace();
                     }
-                    System.out.println("first if statement started correctly");
                 } else {
                     try {
                         cameraManager.setTorchMode(cameraID, true);
@@ -130,18 +143,17 @@ public class TorchMainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-                System.out.println("second if statement started correctly");
                 ledState = !ledState;
-                SystemClock.sleep(400);
+                SystemClock.sleep(350);
             }
             try {
                 cameraManager.setTorchMode(cameraID, false);
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
-
         });
         thread.start();
+
 
     }
 
